@@ -5,7 +5,7 @@ import time
 import numpy as np
 
 class WindowManager(object):
-    def __init__(self, mirror=True, keypressCallback = None):
+    def __init__(self, mirror=True):
         self._capture = cv2.VideoCapture(0)
         self._windowName = 'NewWindow'
         self._enteredFrame = False
@@ -16,7 +16,6 @@ class WindowManager(object):
         self._startTime = None
         self._fpsEstimate = None
         self._mirror = mirror
-        self._keypressCallback = keypressCallback
         self._isWindowCreated = False
         # self.mpDraw = mp.solutions.drawing_utils
         # self.mpPose = mp.solutions.pose
@@ -48,7 +47,6 @@ class WindowManager(object):
             'previous enterFrame() had no matching exitFrame()'
         if self._capture is not None:
             self._enteredFrame = self._capture.grab()
-
     def exitFrame(self):
         """Draw to the window. Write to files. Release the
          frame."""
@@ -110,8 +108,9 @@ class WindowManager(object):
                     self._detector.draw_circle(frame,self.x1, self.y1, self.x2, self.y2)
                     self._detector.goldenratios(frame, lmlist)
                     self._detector.waist_body_ratio(frame, lmlist)
+                self.processEvents()
             self.exitFrame()
-            self.processEvents()
+
 
     @property
     def isWindowCreated(self):
@@ -127,7 +126,7 @@ class WindowManager(object):
 
     def processEvents(self):
         keycode = cv2.waitKey(1)
-        if self._keypressCallback is not None and keycode != -1:
+        if keycode != -1:
             self.onKeypress(keycode)
 
     def show(self, frame):
@@ -140,7 +139,7 @@ class WindowManager(object):
         tab -> Start/stop recording a screencast.
         escape -> Quit.
         """
-        if keycode == 27:  # escape
+        if keycode == 27:
             self.destroyWindow()
 
 
