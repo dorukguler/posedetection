@@ -130,10 +130,27 @@ class CaptureManager(object):
 
 
 class WindowManager(object):
-    def __init__(self, windowName, keypressCallback = None):
-        self.keypressCallback = keypressCallback
-        self._windowName = windowName
+    def __init__(self, mirror=True, keypressCallback = None):
+        self._capture = cv2.VideoCapture(0)
+        self._windowName = 'NewWindow'
+        self._enteredFrame = False
+        self._frame = None
         self._isWindowCreated = False
+        self._channel = 0
+        self._framesElapsed = 0
+        self._startTime = None
+        self._fpsEstimate = None
+        self._mirror = mirror
+        self.keypressCallback = keypressCallback
+        self._isWindowCreated = False
+        # self.mpDraw = mp.solutions.drawing_utils
+        # self.mpPose = mp.solutions.pose
+        # self.pose = self.mpPose.Pose()
+        self.x1 = None
+        self.x2 = None
+        self.y1 = None
+        self.y2 = None
+        self._detector = pm.PoseDetector()
 
     @property
     def isWindowCreated(self):
