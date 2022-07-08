@@ -16,7 +16,7 @@ class WindowManager(object):
         self._startTime = None
         self._fpsEstimate = None
         self._mirror = mirror
-        self.keypressCallback = keypressCallback
+        self._keypressCallback = keypressCallback
         self._isWindowCreated = False
         # self.mpDraw = mp.solutions.drawing_utils
         # self.mpPose = mp.solutions.pose
@@ -95,6 +95,24 @@ class WindowManager(object):
         self._enteredFrame = False
 
 
+    def run(self):
+        """Run the main loop."""
+        self.createWindow()
+        while self.isWindowCreated:
+            self.enterFrame()
+            frame = self.frame
+            if frame is not None:
+                frame = self._detector.FindPose(frame)
+                lmlist = self._detector.getpoints(frame)
+                if len(lmlist) != 0:
+                    self.x1, self.x2 = lmlist[4][1], lmlist[29][1]
+                    self.y1, self.y2 = lmlist[4][2], lmlist[29][2]
+                    self._detector.draw_circle(frame,self.x1, self.y1, self.x2, self.y2)
+                    self._detector.goldenratios(frame, lmlist)
+                    self._detector.waist_body_ratio(frame, lmlist)
+            self.exitFrame()
+            self.processEvents()
+
     @property
     def isWindowCreated(self):
         return self._isWindowCreated
@@ -103,18 +121,30 @@ class WindowManager(object):
         cv2.namedWindow(self._windowName)
         self._isWindowCreated = True
 
-    def show(self, frame):
-        cv2.imshow(self._windowName, frame)
-
     def destroyWindow(self):
         cv2.destroyWindow(self._windowName)
         self._isWindowCreated = False
 
     def processEvents(self):
         keycode = cv2.waitKey(1)
-        if self.keypressCallback is not None and keycode != -1:
-            self.keypressCallback(keycode)
+        if self._keypressCallback is not None and keycode != -1:
+            self.onKeypress(keycode)
+
+    def show(self, frame):
+        frame = np.fliplr(frame)
+        cv2.imshow(self._windowName, (frame))
+
+    def onKeypress(self, keycode):
+        """Handle a keypress.
+        space -> Take a screenshot.
+        tab -> Start/stop recording a screencast.
+        escape -> Quit.
+        """
+        if keycode == 27:  # escape
+            self.destroyWindow()
 
 
+if __name__ == "__main__":
+    WindowManager().run()
 
 
