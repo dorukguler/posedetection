@@ -100,15 +100,14 @@ class WindowManager(object):
             self.enterFrame()
             frame = self.frame
             if frame is not None:
-                pass
-                # frame = self._detector.FindPose(frame)
-                # lmlist = self._detector.getpoints(frame)
-                # if len(lmlist) != 0:
-                #     self.x1, self.x2 = lmlist[4][1], lmlist[29][1]
-                #     self.y1, self.y2 = lmlist[4][2], lmlist[29][2]
-                #     self._detector.draw_circle(frame,self.x1, self.y1, self.x2, self.y2)
-                #     self._detector.goldenratios(frame, lmlist)
-                #     self._detector.waist_body_ratio(frame, lmlist)
+                frame = self._detector.FindPose(frame)
+                lmlist = self._detector.getpoints(frame)
+                if len(lmlist) != 0:
+                    self.x1, self.x2 = lmlist[4][1], lmlist[29][1]
+                    self.y1, self.y2 = lmlist[4][2], lmlist[29][2]
+                    self._detector.draw_circle(frame,self.x1, self.y1, self.x2, self.y2)
+                    self._detector.goldenratios(frame, lmlist)
+                    self._detector.waist_body_ratio(frame, lmlist)
                 self.processEvents()
             self.exitFrame()
 
