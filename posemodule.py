@@ -56,8 +56,7 @@ class PoseDetector():
         leftarmhalfy=abs(goldenlist[14][2]-goldenlist[12][2])
         lefthalflen=sqrt(leftarmhalfx ** 2 + leftarmhalfy ** 2)
         golden_ratio = int(leftfulllength/lefthalflen)
-        org = (70,75)
-        cv2.putText(frame, str(golden_ratio),org, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,0,255), 2, cv2.LINE_8)
+        cv2.putText(frame, str(golden_ratio),(70,75), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,0,255), 2, cv2.LINE_8)
         return golden_ratio
 
     def waist_body_ratio(self,frame,goldenlist):
@@ -69,15 +68,6 @@ class PoseDetector():
         lefthalflen=sqrt(leftarmhalfx ** 2 + leftarmhalfy ** 2)
         theratio=leftfulllength/lefthalflen
         formatted_ratio = "{:.3f}".format(theratio)
-        #print(frame[100][100])
-        #print(frame.shape)
-        #print(type(frame[200::250]))
-        # altkenar = frame[200::250]
-        # soldikkenar = frame[:][200::250]
-        # ustkenar = altkenar[]
-        # frame = np.flip(frame[200::250])
-
-        #a, b, c, d = frame(200,0),frame(250,0),frame(0,200),frame(0,350)
         cv2.putText(frame,str(formatted_ratio),(50,50),cv2.FONT_HERSHEY_SIMPLEX,1,(200,255,255),1,cv2.LINE_AA,bottomLeftOrigin= False)
         return formatted_ratio
 
