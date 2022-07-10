@@ -1,6 +1,5 @@
 import cv2
 import mediapipe as mp
-import posemodule as pm
 import time
 import numpy as np
 
@@ -17,14 +16,7 @@ class WindowManager(object):
         self._fpsEstimate = None
         self._mirror = mirror
         self._isWindowCreated = False
-        # self.mpDraw = mp.solutions.drawing_utils
-        # self.mpPose = mp.solutions.pose
-        # self.pose = self.mpPose.Pose()
-        self.x1 = None
-        self.x2 = None
-        self.y1 = None
-        self.y2 = None
-        self._detector = pm.PoseDetector()
+
 
     @property
     def channel(self):
@@ -82,37 +74,9 @@ class WindowManager(object):
             else:
                 cv2.imshow(self._windowName, (self.frame))
 
-        # # Write to the image file, if any.
-        # if self.isWritingImage:
-        #     cv2.imwrite(self._imageFilename, self._frame)
-        #     self._imageFilename = None
-        # # Write to the video file, if any.
-        # self._writeVideoFrame()
-        # # Release the frame.
+
         self._frame = None
         self._enteredFrame = False
-
-
-    def run(self):
-        """Run the main loop."""
-        self.createWindow()
-        while self.isWindowCreated:
-            self.enterFrame()
-            frame = self.frame
-            if frame is not None:
-                frame = self._detector.FindPose(frame)
-                lmlist = self._detector.getpoints(frame)
-                if len(lmlist) != 0:
-                    pass
-                    # self.x1, self.x2 = lmlist[4][1], lmlist[29][1]
-                    # self.y1, self.y2 = lmlist[4][2], lmlist[29][2]
-                    # self._detector.draw_circle(frame,self.x1, self.y1, self.x2, self.y2)
-                    # self._detector.goldenratios(frame, lmlist)
-                    # self._detector.waist_body_ratio(frame, lmlist)
-                self.processEvents()
-            self.exitFrame()
-
-
     @property
     def isWindowCreated(self):
         return self._isWindowCreated
@@ -144,5 +108,3 @@ class WindowManager(object):
             self.destroyWindow()
 
 
-if __name__ == "__main__":
-    WindowManager().run()

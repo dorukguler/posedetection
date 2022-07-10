@@ -4,6 +4,7 @@ import mediapipe as mp
 import numpy as np
 import pandas as pd
 from math import sqrt
+from managers import WindowManager
 #initialize mpos
 
 class PoseDetector():
@@ -15,6 +16,7 @@ class PoseDetector():
         self.x2=None
         self.y1=None
         self.y2=None
+        self._windowmanager = WindowManager()
 
 
             # print(end-start)
@@ -69,16 +71,7 @@ class PoseDetector():
         lefthalflen=sqrt(leftarmhalfx ** 2 + leftarmhalfy ** 2)
         theratio=leftfulllength/lefthalflen
         formatted_ratio = "{:.3f}".format(theratio)
-        #print(frame[100][100])
-        #print(frame.shape)
-        #print(type(frame[200::250]))
-        # altkenar = frame[200::250]
-        # soldikkenar = frame[:][200::250]
-        # ustkenar = altkenar[]
-        # frame = np.flip(frame[200::250])
-
-        #a, b, c, d = frame(200,0),frame(250,0),frame(0,200),frame(0,350)
-        cv2.putText(frame,str(formatted_ratio),(50,50),cv2.FONT_HERSHEY_SIMPLEX,1,(200,255,255),1,cv2.LINE_AA,bottomLeftOrigin= False)
+        cv2.putText(frame,str(formatted_ratio),(50,50),cv2.FONT_HERSHEY_SIMPLEX,1,(200,255,255),1,cv2.LINE_AA,bottomLeftOrigin=False)
         return formatted_ratio
 
     def resize(self, frame, resize):
@@ -101,3 +94,25 @@ class PoseDetector():
         formatted_ratio = "{:.3f}".format(theratio)
         return formatted_ratio
 
+    def run(self):
+        """Run the main loop."""
+        self._windowmanager.createWindow()
+        while self._windowmanager.isWindowCreated:
+            self._windowmanager.enterFrame()
+            frame = self._windowmanager.frame
+            if frame is not None:
+                frame = self.FindPose(frame)
+                lmlist = self.getpoints(frame)
+                if len(lmlist) != 0:
+                    #pass
+                    self.x1, self.x2 = lmlist[4][1], lmlist[29][1]
+                    self.y1, self.y2 = lmlist[4][2], lmlist[29][2]
+                    self.draw_circle(frame,self.x1, self.y1, self.x2, self.y2)
+                    self.goldenratios(frame, lmlist)
+                    self.waist_body_ratio(frame, lmlist)
+                self._windowmanager.processEvents()
+            self._windowmanager.exitFrame()
+
+
+if __name__ == "__main__":
+    PoseDetector().run()
